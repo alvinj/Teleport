@@ -1,0 +1,96 @@
+This file contains installation instructions for the Teleport command,
+Version 0.5.
+
+INTRODUCTION
+------------
+
+As mentioned on the "teleport" page (http://alvinalexander.com/linux/linux-teleport-command-cd-improved),
+the teleport command ("tp") is an improved version of the traditional
+Unix/Linux/GNU cd command. A simple way to think about it is that its
+the cd command, with a memory.
+
+The only way I know of to get the Teleport command to work (without rewriting 
+the cd command) is to write it as a Bash function. 
+
+Therefore, the way to make the Teleport command available to you is to invoke 
+it from one of your Linux startup files, either ~/.bashrc, or ~/.bash_profile.
+
+
+INSTALLATION
+------------
+
+Installation is very simple, and requires just a few steps, as shown here:
+
+1) Copy the tp_command file to your HOME directory. Personally, I rename
+   my file to .tp_command, and that's what I'll use for this documentation,
+   but you can name this file whatever you like.
+
+2) Move to your home directory, and issue the following two commands:
+
+   touch .tp_aliases
+   touch .tp_history
+
+3) Edit your ~/.bash_profile or ~/.bashrc file, and add a line similar to
+   this:
+
+   . .tp_command
+
+   This command tells Bash to "source" the .tp_command file, so make sure you
+   use whatever filename you used in Step 1.
+
+   If you're not familiar with the dot command, "sourcing" a file like this
+   reads all the Bash code in that file into the memory of your Bash environment, 
+   and makes the "tp" and "tpa" commands available to you.
+
+4) If you're new to Linux, just log out and then log back in again, and the 
+   tp and tpa commands should be available to you.
+
+   Or, if you're comfortable with Linux/Unix, you have probably surmised that 
+   you can just run this command without having to log out and then log back 
+   in again:
+
+   . .tp_command
+
+   Either approach should work fine.
+
+5) Now, just start using the tp command to move between directories instead of 
+   the cd command.  I hope you'll like it as much as I do.
+
+
+TELEPORT HELP
+-------------
+
+You can get basic help on the Teleport command like this:
+
+tp -h
+
+You can also get basic help on the Teleport Aliases command like this:
+
+tpa -h
+
+The latest documentation page will always be here:
+
+http://www.devdaily.com/linux/linux-teleport-command-cd-improved
+
+
+TO UN-INSTALL TELEPORT
+----------------------
+
+If you want to un-install Teleport for any reason, just reverse the steps 
+shown above. Specifically, follow these steps:
+
+1) Remove the ~/.tp_command file.
+2) Remove the ~/.tp_aliases file.
+3) Remove the ~/.tp_history file.
+4) Remove the line you added to your ~/.bash_profile or ~/.bashrc file.
+
+
+CONTACT INFORMATION
+-------------------
+
+The Teleport command was written by Alvin Alexander of devdaily.com.
+To contact me, just use the contact form on the devdaily website:
+
+http://www.devdaily.com/contact
+
+

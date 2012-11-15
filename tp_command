@@ -1,0 +1,489 @@
+#----------------------------------------------------------------------------#
+#
+# Copyright Alvin Alexander, http://alvinalexander.com, 2009-2012. 
+# All Rights Reserved. This program is distributed free of charge under 
+# the terms and conditions of the GNU GPL Version 3.
+#
+# Version 0.5
+#
+# 2011-08-03: improved 'tp -n' functionality contributed by John Santos
+# 2010-06-22: tpa now handles directories with spaces properly
+# 2010-05-18: now handling directories with spaces properly
+#
+#----------------------------------------------------------------------------#
+
+# Name these files whatever you want. Just make sure you can write to them.
+typeset -r TP_HISTORY_FILE=~/.tp_history
+typeset -r TP_ALIAS_FILE=~/.tp_aliases
+
+# usage:  i_go [dir]
+#         i_go foo/bar
+#         i_go /tmp
+#         i_go /tmp/Foo Bar Baz
+i_go()
+{
+    typeset where="$@"
+
+    # this is a kludge to handle the case where the user types 'tp'
+    # by itself, implying they want to go to their home directory; wrapping
+    # $where in quotes causes a problem with the cd command.
+    if [[ -z "$where" ]]
+    then
+      builtin cd  && i_addToHistory
+    else
+      builtin cd "$where" && i_addToHistory
+    fi
+}
+
+function tp ()
+{
+    # sets global 'dirlist'
+    # sets global 'listsize'
+    i_load_dirlist()
+    {
+      local -i jj
+      jj=0
+      while read line
+      do
+        dirlist[jj]="$line"
+        (( jj++ ))
+      done < $TP_HISTORY_FILE
+      listsize=${#dirlist[@]}
+    }
+
+    # considering an "up" command, but not implemented yet
+    #local DO_FIND_UP=FALSE
+    #local -i DO_FIND_DOWN=0
+
+    local -i DO_LIST=0
+    local -i DO_JUMP=0
+    local -i DO_NUMBER=0
+    local -i DO_SEARCH=0
+    local -i DO_HELP=0
+    local -i DO_ASK_NUMBER=0
+    local searchFor=
+
+    OPTIND=1
+    # leading ':' tells getopts to be silent about missing args
+    while getopts :hj:lns: option
+    do
+    	case "$option" in
+        h)
+             DO_HELP=1
+             ;;
+        j)
+             searchFor=$OPTARG
+             DO_JUMP=1
+             ;;
+        l)
+             DO_LIST=1
+             ;;
+        n)
+             # if $2 is null, show list and set DO_ASK_NUMBER
+             if [[ -z "$2" ]]
+             then
+               tp -l
+               DO_ASK_NUMBER=1
+             # if $2 is a number greater than zero then set DO_NUMBER
+             elif [[ "$2" =~ ^[0-9]+$ ]] && (( $2 > 0 ))
+             then
+               searchFor=$2
+               DO_NUMBER=1
+             # Otherwise an invalid parameter was received, so show usage statement
+             else
+               displayTpUsageStatement
+               return
+             fi
+             ;;
+        s)
+             #echo "-S OPTION WAS TRIGGERED"
+             #echo "OPTARG = $OPTARG"
+             searchFor=$OPTARG
+             DO_SEARCH=1
+             ;;
+	*)
+             echo "An invalid option was received. (-j, and -s require an argument.)"
+             displayTpUsageStatement
+             return
+             ;;
+	    esac
+    done
+
+    #--------------------------------------------------------#
+    # ASK user to pick a number of the list of tp commands.  #
+    # This usually comes after a listing of the tp commands. #
+    #--------------------------------------------------------#
+    if (( DO_ASK_NUMBER ))
+    then
+      echo -n " Pick a number or press <ENTER> to cancel: "
+      read searchFor
+      # if $searchFor is a number greater than zero, continue
+      if [[ "$searchFor" =~ ^[0-9]+$ ]] && (( $searchFor > 0 ))
+      then
+        tp -n $searchFor
+      fi
+      echo ""
+      return
+    fi
+
+    #---------------------------------------------------#
+    # user wants to see a LIST of previous tp commands. #
+    # keep the ordering consistent w/ the history cmd.  #
+    #---------------------------------------------------#
+    if (( DO_LIST ))
+    then
+      echo ""
+      i_load_dirlist
+      for (( ii=listsize-1; ii >= 0; ii-- ))
+      do
+        printf "%2d  %s\n" $(( listsize - ii )) "${dirlist[ii]}"
+      done
+      echo ""
+      unset dirlist
+      return
+    fi
+
+    #-----------------------------------------------------------#
+    # user wants to SEARCH for something (but not 'jump' there) #
+    #-----------------------------------------------------------#
+    if (( DO_SEARCH ))
+    then
+      i_load_dirlist
+      for (( ii=listsize-1; ii >= 0; ii-- ))
+      do
+        if [[ "${dirlist[ii]}" =~ "$searchFor" ]]
+        then
+          printf "%2d  %s\n" $(( listsize - ii )) "${dirlist[ii]}"
+        fi
+      done
+      unset dirlist
+      return
+    fi
+
+    #--------------------------------------#
+    # user wants to JUMP to a partial name #
+    #--------------------------------------#
+    if (( DO_JUMP ))
+    then
+      i_load_dirlist
+      for (( ii=listsize-1; ii >= 0; ii-- ))
+      do
+        if [[ "${dirlist[ii]}" =~ "$searchFor" ]]
+        then
+          i_go "${dirlist[ii]}"
+          return 0
+        fi
+      done
+      unset dirlist
+      echo "Sorry, no directory in your history contains the name \"$jumpTo\"."
+      return 1
+    fi
+
+    #-------------------------------------------#
+    # user wants to tp to a directory by NUMBER #
+    #-------------------------------------------#
+    if (( DO_NUMBER ))
+    then
+
+      # $TP_HISTORY_FILE currently stores the most recent folder first,
+      # so i need to do some math to find the desired line.
+      # todo: store the lines in this file with the most recent line last
+      # to make this much easier.
+
+      local -i numrecs desiredLine lineNeeded
+      desiredLine=$searchFor
+
+      # load the history lines into the dirlist array
+      ii=0
+      while read line
+      do
+        dirlist[ii]="$line"
+        (( ii++ ))
+      done < $TP_HISTORY_FILE
+
+      if (( ( ii - searchFor ) < 0 ))
+      then
+        echo "Number $desiredLine is bigger than your history." 1>&2
+        return 1
+      fi
+
+      # go to the calculated line
+      numrecs=`wc -l $TP_HISTORY_FILE | awk '{ print $1 }'`
+      (( lineNeeded = numrecs - desiredLine ))
+      i_go "${dirlist[$lineNeeded]}"
+
+      unset dirlist
+      return 0
+    fi
+
+    #------------------------------------------------------------------#
+    # user wants to move to a directory beneath the current directory  #
+    # using the find option.                                           #
+    #------------------------------------------------------------------#
+    if (( DO_FIND_DOWN ))
+    then
+      # Only use first found. Use find but only take the first one
+      # unless we have a plan for how to decide if a subsequent
+      # one is better.
+      local pathToDir
+      # Don't do this:
+      # find . -type d -name "*$searchFor*" -print | read pathToDir
+      # because pathToDir is being set in a child process and so will
+      # not be set in the parent.
+      # We need to run the find and shut it off based on the
+      # first thing it finds.
+      # The best I can come up with is this
+      # builtin cd $(find . -type d -name "*$searchFor*" -print | \
+      #   head -1) && i_addToHistory
+      # But this does no error checking. Let's go with this for the time being.
+      pathToDir=$(find . -type d -name "*$searchFor*" -print | head -1)
+      i_go $pathToDir
+      return
+    fi
+
+    #-----------------------#
+    # user wants HELP/USAGE #
+    #-----------------------#
+    if (( DO_HELP ))
+    then
+      displayTpUsageStatement
+      return
+    fi
+
+    # the normal (no command-line switch) behavior starts here
+    local destination=$1
+
+    # DEBUG - use when working on directories with spaces
+    #echo "destination =:${destination}:"
+
+    # try to handle the special cases first.
+    # also, look locally before looking in the history.
+
+    # if $1 is null, go home
+    if [[ -z "$1" ]]
+    then
+      i_go ''
+      return
+    fi
+
+    # if $1 begins with a "/", user has specified an absolute path ... go there
+    # if $1 is - or ~, go to those directories
+    # if $1 is in the current dir, go there
+    if [[ "${destination:0:1}" = / ||
+      "$destination" = '-' ||
+      "$1" = '~' ||
+      -d "$destination" ]]
+    then
+      i_go $destination
+      return
+    fi
+    
+    # if $1 is in the history, go there
+    historyJump "$1" || i_go "$destination"
+    
+    # TODO - could improve this by also looking in the tp-aliases file
+    #        if the desired directory is not found by any other means.
+}
+
+# adds the CWD to the top of the stack, and removes any other
+# entries to the CWD. this keeps the same directory from being in
+# the history file over and over again, but always keeps the most recent
+# directory at the top of the stack.
+function i_addToHistory()
+{
+  local currentDir="$PWD"
+
+  # load up 'dirlist' and 'listsize'
+  i_load_dirlist
+
+  # now write these entries back out to the history file    
+  rm -f $TP_HISTORY_FILE
+  echo $currentDir > $TP_HISTORY_FILE
+  local ii
+  for (( ii=0; ii < listsize; ii++ ))
+  do
+    # no duplicates allowed in the history file
+    if [ "$currentDir" != "${dirlist[ii]}" ]
+    then
+      echo ${dirlist[ii]} >> $TP_HISTORY_FILE
+    fi
+  done
+  
+  unset dirlist listsize
+}
+
+
+# pass in the partial name of a directory that you want to jump to.
+# for instance, type in "logs" and this function can take you to
+# "/usr/local/apache/logs" if that is the name of the last directory
+# you visited that ended with the string "logs".
+
+function historyJump()
+{
+  local fullDirName=
+  getFullDirectoryFromHistory $1
+  fullDirName="$gFDFHRet"
+  [[ -z "$fullDirName" ]] && return 1
+  i_go $fullDirName
+}
+
+# given a partial directory name, get a full directory path from
+# the history file.
+
+function getFullDirectoryFromHistory()
+{
+  local desiredLoc=$1
+  local line
+  gFDFHRet=    # Global used for a return value
+  while read line
+  do
+    [[ -z "$line" ]] && continue
+    local currentBasename=${line##*/}
+    if [[ "$desiredLoc" = "$currentBasename" ]]
+    then
+      gFDFHRet="$line"
+      return
+    fi
+  done < $TP_HISTORY_FILE
+}
+
+function displayTpUsageStatement()
+{
+    cat <<'EOFFOE'
+
+Usage:      tp [DIR]
+
+Purpose:    Provide the same capabilities as the 'cd' command, but with a memory
+            of directories that you have previously visited.
+
+  -h        Show HELP (this output)
+  -j PARTIAL-DIR
+            JUMP to a directory found in your history (by partial directory name)
+  -l        LIST the history of visited directories
+  -n [NUM]
+            Go to a directory by NUMBER. NUM corresponds to the number printed
+            by the -l option. If NUM is not specified then a list of visited
+            directories is shown and user can pick a number.
+  -s DIR    SEARCH for and display a directory named DIR found in your history
+EOFFOE
+
+#  -d DIR   FIND a directory named DIR beneath the current directory and go to it
+#           ('dive' or 'down')
+
+}
+
+
+function displayTpaUsageStatement()
+{
+    cat <<'EOFFOE'
+
+Usage:         tpa ALIAS
+Purpose:       Transport to a directory that has an alias ALIAS
+               associated with it.
+
+  -a ALIAS DIR Add ALIAS as an alias/shortcut for the directory DIR
+               (Use quotes around DIR if DIR contains spaces)
+  -h           Show HELP (this output)
+  -l           LIST the known directory aliases
+  -r ALIAS     Remove ALIAS from your list of known aliases
+
+EOFFOE
+}
+
+#-----------------------#
+# the tp alias function #
+#-----------------------#
+
+function tpa()
+{
+    local -i DO_ADD=0
+    local -i DO_HELP=0
+    local -i DO_LIST=0
+    local -i DO_REMOVE=0
+    local answer
+    local prompt
+    local savecasematch
+
+    OPTIND=1
+    while getopts a:hlr: option
+    do
+    case "$option"
+    in
+        a)
+          DO_ADD=1
+          ;;
+        h)
+          displayTpaUsageStatement
+          return
+          ;;
+        l)
+          DO_LIST=1
+          ;;
+        r)
+          DO_REMOVE=1
+          ;;
+    esac
+    done
+
+    #----------------------------#
+    # user wants to add an alias #
+    #----------------------------#
+    if (( DO_ADD ))
+    then
+      if (( $# == 3 ))
+      then
+          echo "$2:$3" >> $TP_ALIAS_FILE
+          echo "Alias \"$2\" was added for the directory \"$3\"."
+      else
+      echo 'Incorrect number of arguments for Add operation.'
+      fi
+    return
+    fi
+
+    #----------------------------------#
+    # user wants to list their aliases #
+    #----------------------------------#
+    if (( DO_LIST ))
+    then
+      # TODO: improve this output format
+      cat $TP_ALIAS_FILE
+      return
+    fi
+
+    #-------------------------------#
+    # user wants to remove an alias #
+    #-------------------------------#
+    if (( DO_REMOVE ))
+    then
+      local aliasToRemove=$2
+      if grep -cq "^${aliasToRemove}:" $TP_ALIAS_FILE
+      then
+          savecasematch=$(shopt -p nocasematch)
+          prompt=\
+    "About to remove alias \"$aliasToRemove\" -- are you sure (y/[n])?: "
+          read -n 1 -e -p "$prompt" answer
+          if [[ "$answer" = y  ]]
+          then
+            # do remove here
+            grep -v "^${aliasToRemove}:" $TP_ALIAS_FILE > ${TP_ALIAS_FILE}.tmp
+            mv ${TP_ALIAS_FILE}.tmp $TP_ALIAS_FILE
+          else
+        echo "Remove operation cancelled."
+      fi
+      $savecasematch
+    else
+      echo "Alias \"${aliasToRemove}\" not found ... not removed."
+    fi
+  return
+  fi
+
+    #-----------------------------#
+    # find the alias and go to it #
+    #-----------------------------#
+
+    local desiredDir=$(grep "^${1}:" $TP_ALIAS_FILE | cut -f2 -d:)
+    [[ -n "$desiredDir" ]] && { tp "$desiredDir"; return; }
+    #echo "Alias \"${1}\" not found ... don't know where to go."
+    displayTpaUsageStatement
+    return
+}
