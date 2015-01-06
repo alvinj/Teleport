@@ -56,6 +56,15 @@ Installation is very simple, and requires just a few steps, as shown here:
 5) Now, just start using the tp command to move between directories instead of 
    the cd command.  I hope you'll like it as much as I do.
 
+ENABLE TELEPORT COMPLETION WITH
+-------------------------------
+
+Defaultly the completion will be the same as cd. You can add the handy teleport completion. 
+
+Just copy the completion file to the bashcompletion list
+
+``cp completion /etc/bash_completion.d/teleport``
+
 
 TELEPORT HELP
 -------------
