@@ -63,7 +63,7 @@ Defaultly the completion will be the same as cd. You can add the handy teleport 
 
 Just copy the completion file to the bashcompletion list
 
-``cp completion /etc/bash_completion.d/teleport``
+    cp completion /etc/bash_completion.d/teleport
 
 
 TELEPORT HELP
