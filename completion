@@ -10,26 +10,21 @@ _teleport-command()
 
     opts=""
 
-#    if [ -z "$cur" ]; then
-#     cur="."
-#    fi
-
     # HISTORY COMPLETION
     while read i; do
      opts="$opts $(basename $i)"
     done < ~/.tp_history
 
     # CURRENT DIR COMPLETION
-
     if [ -z "$cur" ]; then
      cdir="."
     elif [[ "${cur:${#cur} - 1}" == '/' ]]; then
      cdir="$cur"
     else
-     cdir=$(dirname ${cur})
+     cdir=$(command dirname ${cur})
     fi
 
-    for i in `ls "$cdir" 2>/dev/null`;  do
+    for i in `command ls "$cdir" 2>/dev/null`;  do
      opts="$opts $(basename $i)"
     done
 
