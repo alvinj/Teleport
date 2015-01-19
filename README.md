@@ -3,6 +3,7 @@ The Teleport Command
 ====================
 
 The *Teleport* command is an improved version of the Unix/Linux `cd` command. 
+It can be used on all Unix/Linux systems, including Mac OS X.
 
 
 Features
