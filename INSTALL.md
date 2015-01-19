@@ -5,7 +5,7 @@ INTRODUCTION
 ------------
 
 As mentioned on [the Teleport page](http://alvinalexander.com/linux/linux-teleport-command-cd-improved),
-the teleport command ("tp") is an improved version of the traditional
+the teleport command (=tp=) is an improved version of the traditional
 Unix/Linux/GNU cd command. A simple way to think about it is that its
 the cd command, with a memory.
 
