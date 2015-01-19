@@ -56,14 +56,49 @@ Installation is very simple, and requires just a few steps, as shown here:
 5) Now, just start using the tp command to move between directories instead of 
    the cd command.  I hope you'll like it as much as I do.
 
-ENABLE TELEPORT COMPLETION
---------------------------
 
-Defaultly the completion will be the same as cd. You can add the handy teleport completion. 
+ENABLING TELEPORT COMPLETION
+----------------------------
 
-Just copy the completion file to the bashcompletion list
+Thanks to a nice addition by [SneakyBobito](https://github.com/SneakyBobito), you can use Bash completion with Teleport.
+When you type a command like this:
+
+    tp Twit
+
+and then hit the [Tab] key, this new code will scan your Teleport history file, and if
+it finds any matches, it will automatically complete the directory. For instance, I have
+a directory named _TwitterClient_ in my .tp_history file, so when I type this:
+
+    tp Twit[Tab]
+
+my command is expanded to this:
+
+    tp TwitterClient
+
+This code is completely optional for you, but it's a great feature. To install this feature
+you need to know a little bit about how Bash completion works. For instance, I just got it
+running on a Mac OS X system by installing the bash-completion module for OS X with Homebrew.
+I first used this command to install the bash-completion module:
+
+    brew install bash-completion
+
+Then I modified my .bash_profile file as the instructions indicated. Next, I copied the new
+_completion_ file to the Homebrew bash-completion directory like this:
+
+    cp completion /usr/local/etc/bash_completion.d/teleport
+
+After that, I started a new OS X Terminal session and used the new Bash completion code with
+the tp command, and it worked like a charm.
+
+Note that your bash-completion directory may be different depending on your operating system
+and how you installed bash-completion. For example, the correct directory on SneakyBobito's
+system is this:
 
     cp completion /etc/bash_completion.d/teleport
+
+So again, you need to know something about Bash completion to get this to work, but once you
+get it working it's a terrific addition to Teleport. (So many thanks to SneakyBobito for this
+contribution.)
 
 
 TELEPORT HELP
@@ -79,7 +114,7 @@ tpa -h
 
 The latest documentation page will always be here:
 
-http://www.devdaily.com/linux/linux-teleport-command-cd-improved
+http://alvinalexander.com/linux/linux-teleport-command-cd-improved
 
 
 TO UN-INSTALL TELEPORT
@@ -97,9 +132,10 @@ shown above. Specifically, follow these steps:
 CONTACT INFORMATION
 -------------------
 
-The Teleport command was written by Alvin Alexander of devdaily.com.
-To contact me, just use the contact form on the devdaily website:
+The Teleport command was written by Alvin Alexander of [alvinalexander.com](http://alvinalexander.com).
+To contact me, just use the contact form on my website:
 
-http://www.devdaily.com/contact
+http://alvinalexander.com/contact
+
 
 
