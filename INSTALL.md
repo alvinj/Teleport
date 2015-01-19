@@ -138,8 +138,8 @@ The latest documentation page will always be here:
 [Teleport documentation page](http://alvinalexander.com/linux/linux-teleport-command-cd-improved)
 
 
-To Un-install Teleport
-----------------------
+To Uninstall Teleport
+---------------------
 
 If you want to un-install Teleport for any reason, just reverse the steps 
 shown above. Specifically, follow these steps:
