@@ -1,0 +1,36 @@
+# Bash completion for teleport command
+#
+# https://github.com/alvinj/Teleport
+#
+
+_teleport-command()
+{
+  COMPREPLY=()
+  cur=${COMP_WORDS[COMP_CWORD]}
+
+  opts=""
+
+  # HISTORY COMPLETION
+  while read i; do
+    opts="$opts $(basename $i)"
+  done < ~/.tp_history
+
+  # CURRENT DIR COMPLETION
+  if [ -z "$cur" ]; then
+    cdir="."
+  elif [[ "${cur:${#cur} - 1}" == '/' ]]; then
+    cdir="$cur"
+  else
+    cdir=$(command dirname ${cur})
+  fi
+
+  for i in `command ls "$cdir" 2>/dev/null`;  do
+    opts="$opts $(basename $i)"
+  done
+
+  COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+  return 0
+
+}
+
+complete -o default -F _teleport-command tp
