@@ -1,7 +1,7 @@
 This file contains installation instructions for the Teleport command,
 Version 0.6.
 
-INTRODUCTION
+Introduction
 ------------
 
 As mentioned on [the Teleport page](http://alvinalexander.com/linux/linux-teleport-command-cd-improved),
@@ -16,7 +16,7 @@ Therefore, the way to make the Teleport command available to you is to invoke
 it from one of your Linux startup files, either *~/.bashrc*, or *~/.bash_profile*.
 
 
-INSTALLATION
+Installation
 ------------
 
 Installation is very simple, and requires just a few steps, as shown here:
@@ -63,7 +63,7 @@ touch .tp_history
    the `cd` command.  I hope you'll like it as much as I do.
 
 
-ENABLING TELEPORT COMPLETION
+Enabling Teleport Completion
 ----------------------------
 
 Thanks to a nice addition by [SneakyBobito](https://github.com/SneakyBobito), 
@@ -119,7 +119,7 @@ get it working it's a terrific addition to Teleport. (So many thanks to SneakyBo
 contribution.)
 
 
-TELEPORT HELP
+Teleport Help
 -------------
 
 You can get basic help on the Teleport command like this:
@@ -138,7 +138,7 @@ The latest documentation page will always be here:
 [Teleport documentation page](http://alvinalexander.com/linux/linux-teleport-command-cd-improved)
 
 
-TO UN-INSTALL TELEPORT
+To Un-install Teleport
 ----------------------
 
 If you want to un-install Teleport for any reason, just reverse the steps 
@@ -152,7 +152,7 @@ shown above. Specifically, follow these steps:
    ~/.bash_profile file.
 
 
-CONTACT INFORMATION
+Contact Information
 -------------------
 
 The Teleport command was written by Alvin Alexander of [alvinalexander.com](http://alvinalexander.com).
