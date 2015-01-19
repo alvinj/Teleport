@@ -1,10 +1,10 @@
 This file contains installation instructions for the Teleport command,
-Version 0.5.
+Version 0.6.
 
 INTRODUCTION
 ------------
 
-As mentioned on the "teleport" page (http://alvinalexander.com/linux/linux-teleport-command-cd-improved),
+As mentioned on [the Teleport page](http://alvinalexander.com/linux/linux-teleport-command-cd-improved),
 the teleport command ("tp") is an improved version of the traditional
 Unix/Linux/GNU cd command. A simple way to think about it is that its
 the cd command, with a memory.
