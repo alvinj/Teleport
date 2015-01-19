@@ -27,8 +27,10 @@ Installation is very simple, and requires just a few steps, as shown here:
 
 2) Move to your home directory, and issue the following two commands:
 
-   touch .tp_aliases
-   touch .tp_history
+```
+touch .tp_aliases
+touch .tp_history
+```
 
 3) Edit your ~/.bash_profile or ~/.bashrc file, and add a line similar to
    this:
