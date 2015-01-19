@@ -17,6 +17,10 @@ with these improvements:
 * It lets you easily jump (teleport) to any directory in your history.
 * You can create aliases for your directories to make it even easier to jump to them.
 
+You can see a short video demo of Teleport in action at this URL:
+
+* http://alvinalexander.com/linux/linux-teleport-command-cd-improved
+
 
 Bash Command-Line Completion
 ----------------------------
