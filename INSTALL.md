@@ -148,6 +148,8 @@ shown above. Specifically, follow these steps:
 2. Remove the ~/.tp_aliases file.
 3. Remove the ~/.tp_history file.
 4. Remove the line you added to your ~/.bash_profile or ~/.bashrc file.
+5. Remove the option bash-completion script and any bash-completion code you added to your
+   ~/.bash_profile file.
 
 
 CONTACT INFORMATION
