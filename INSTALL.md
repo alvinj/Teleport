@@ -21,18 +21,18 @@ INSTALLATION
 
 Installation is very simple, and requires just a few steps, as shown here:
 
-1) Copy the tp_command file to your HOME directory. Personally, I rename
+1. Copy the tp_command file to your HOME directory. Personally, I rename
    my file to .tp_command, and that's what I'll use for this documentation,
    but you can name this file whatever you like.
 
-2) Move to your home directory, and issue the following two commands:
+2. Move to your home directory, and issue the following two commands:
 
 ```
 touch .tp_aliases
 touch .tp_history
 ```
 
-3) Edit your ~/.bash_profile or ~/.bashrc file, and add a line similar to
+3. Edit your ~/.bash_profile or ~/.bashrc file, and add a line similar to
    this:
 
 ```
@@ -46,7 +46,7 @@ touch .tp_history
    reads all the Bash code in that file into the memory of your Bash environment, 
    and makes the "tp" and "tpa" commands available to you.
 
-4) If you're new to Linux, just log out and then log back in again, and the 
+4. If you're new to Linux, just log out and then log back in again, and the 
    tp and tpa commands should be available to you.
 
    Or, if you're comfortable with Linux/Unix, you have probably surmised that 
@@ -59,7 +59,7 @@ touch .tp_history
 
    Either approach should work fine.
 
-5) Now, just start using the tp command to move between directories instead of 
+5. Now, just start using the tp command to move between directories instead of 
    the cd command.  I hope you'll like it as much as I do.
 
 
@@ -144,10 +144,10 @@ TO UN-INSTALL TELEPORT
 If you want to un-install Teleport for any reason, just reverse the steps 
 shown above. Specifically, follow these steps:
 
-1) Remove the ~/.tp_command file.
-2) Remove the ~/.tp_aliases file.
-3) Remove the ~/.tp_history file.
-4) Remove the line you added to your ~/.bash_profile or ~/.bashrc file.
+1. Remove the ~/.tp_command file.
+2. Remove the ~/.tp_aliases file.
+3. Remove the ~/.tp_history file.
+4. Remove the line you added to your ~/.bash_profile or ~/.bashrc file.
 
 
 CONTACT INFORMATION
