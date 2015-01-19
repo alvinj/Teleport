@@ -35,7 +35,9 @@ touch .tp_history
 3) Edit your ~/.bash_profile or ~/.bashrc file, and add a line similar to
    this:
 
-   . .tp_command
+```
+. .tp_command
+```
 
    This command tells Bash to "source" the .tp_command file, so make sure you
    use whatever filename you used in Step 1.
@@ -51,7 +53,9 @@ touch .tp_history
    you can just run this command without having to log out and then log back 
    in again:
 
-   . .tp_command
+```
+. .tp_command
+```
 
    Either approach should work fine.
 
@@ -65,29 +69,39 @@ ENABLING TELEPORT COMPLETION
 Thanks to a nice addition by [SneakyBobito](https://github.com/SneakyBobito), you can use Bash completion with Teleport.
 When you type a command like this:
 
-    tp Twit
+```
+tp Twit
+```
 
 and then hit the [Tab] key, this new code will scan your Teleport history file, and if
 it finds any matches, it will automatically complete the directory. For instance, I have
 a directory named _TwitterClient_ in my .tp_history file, so when I type this:
 
-    tp Twit[Tab]
+```
+tp Twit[Tab]
+```
 
 my command is expanded to this:
 
-    tp TwitterClient
+```
+tp TwitterClient
+```
 
 This code is completely optional for you, but it's a great feature. To install this feature
 you need to know a little bit about how Bash completion works. For instance, I just got it
 running on a Mac OS X system by installing the bash-completion module for OS X with Homebrew.
 I first used this command to install the bash-completion module:
 
-    brew install bash-completion
+```
+brew install bash-completion
+```
 
 Then I modified my .bash_profile file as the instructions indicated. Next, I copied the new
 _completion_ file to the Homebrew bash-completion directory like this:
 
-    cp completion /usr/local/etc/bash_completion.d/teleport
+```
+cp completion /usr/local/etc/bash_completion.d/teleport
+```
 
 After that, I started a new OS X Terminal session and used the new Bash completion code with
 the tp command, and it worked like a charm.
@@ -96,7 +110,9 @@ Note that your bash-completion directory may be different depending on your oper
 and how you installed bash-completion. For example, the correct directory on SneakyBobito's
 system is this:
 
-    cp completion /etc/bash_completion.d/teleport
+```
+cp completion /etc/bash_completion.d/teleport
+```
 
 So again, you need to know something about Bash completion to get this to work, but once you
 get it working it's a terrific addition to Teleport. (So many thanks to SneakyBobito for this
@@ -108,15 +124,18 @@ TELEPORT HELP
 
 You can get basic help on the Teleport command like this:
 
+```
 tp -h
+```
 
 You can also get basic help on the Teleport Aliases command like this:
 
+```
 tpa -h
+```
 
-The latest documentation page will always be here:
-
-http://alvinalexander.com/linux/linux-teleport-command-cd-improved
+The latest documentation page will always be here: 
+[Teleport documentation page](http://alvinalexander.com/linux/linux-teleport-command-cd-improved)
 
 
 TO UN-INSTALL TELEPORT
